@@ -2,20 +2,23 @@ import React, { useState } from "react";
 import "./AgeCalculator.css";
 const AgeCalculator = () => {
   const [birthdate, setBirthdate] = useState("");
-  const [age, setAge] = useState(0);
+  const [age, setAge] = useState({ years: 0, months: 0, days: 0 });
   const calculateAge = () => {
     const today = new Date();
     const birthdateDate = new Date(birthdate);
 
-    let age = today.getFullYear() - birthdateDate.getFullYear();
-    const monthDiff = today.getMonth() - birthdateDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthdateDate.getDate())
-    ) {
-      age--;
+    let years = today.getFullYear() - birthdateDate.getFullYear();
+    let months = today.getMonth() - birthdateDate.getMonth();
+    let days = today.getDate() - birthdateDate.getDate();
+    if (days < 0) {
+      months--;
+      days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
     }
-    setAge(age);
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    setAge({ years, months, days });
   };
   const handleReset = () => {
     setBirthdate("");
@@ -57,7 +60,9 @@ const AgeCalculator = () => {
             <h2 className="my-2">Your Age is:</h2>
           </div>
           <h1 className="age_heading text-center text-primary">
-            {age > 0 ? `${age}` : ""}
+            {age.years > 0 || age.months > 0 || age.days > 0
+              ? `${age.years} years, ${age.months} months, ${age.days} days`
+              : ""}
           </h1>
         </div>
       </div>
